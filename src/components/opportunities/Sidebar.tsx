@@ -1,4 +1,4 @@
-// src/components/Opportunities/Sidebar.tsx
+// src/components/opportunities/Sidebar.tsx
 
 import React from "react";
 import { useAuth } from "../../context/AuthContext";
@@ -17,11 +17,10 @@ const Sidebar: React.FC<SidebarProps> = ({ filterStatus, setFilterStatus }) => {
       <div className="space-y-2">
         <button
           className={`w-full text-left p-2 rounded ${
-            filterStatus === "new" ? "bg-blue-100" : ""
+            filterStatus === "all" ? "bg-blue-100" : ""
           }`}
-          onClick={() => setFilterStatus("new")}
-          disabled={!user}>
-          New Opportunities
+          onClick={() => setFilterStatus("all")}>
+          All Opportunities
         </button>
         <button
           className={`w-full text-left p-2 rounded ${

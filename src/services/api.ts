@@ -58,18 +58,9 @@ export const register = async (credentials: RegisterCredentials) => {
 };
 
 // Opportunity endpoints
-export const getOpportunities = async (page: number) => {
+export const getOpportunities = async (page: number, limit: number, isApplied: boolean = false) => {
   try {
-    const response = await api.get<{ success: boolean; data: Opportunity[]; pagination: { totalPages: number } }>(`/opportunities?page=${page}`);
-    return response.data;
-  } catch (error) {
-    handleError(error);
-  }
-};
-
-export const getOpportunityById = async (id: string) => {
-  try {
-    const response = await api.get<Opportunity>(`/opportunities/${id}`);
+    const response = await api.get<{ success: boolean; data: Opportunity[]; pagination: { totalPages: number } }>(`/opportunities?page=${page}&limit=${limit}&isApplied=${isApplied}`);
     return response.data;
   } catch (error) {
     handleError(error);
@@ -79,15 +70,6 @@ export const getOpportunityById = async (id: string) => {
 export const applyForOpportunity = async (id: string) => {
   try {
     const response = await api.post(`/opportunities/apply/${id}`);
-    return response.data;
-  } catch (error) {
-    handleError(error);
-  }
-};
-
-export const getAppliedOpportunities = async () => {
-  try {
-    const response = await api.get<Opportunity[]>('/opportunities/applied');
     return response.data;
   } catch (error) {
     handleError(error);

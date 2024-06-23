@@ -11,16 +11,21 @@ import axios from "axios";
 
 const Opportunities: React.FC = () => {
   const [opportunities, setOpportunities] = useState<Opportunity[]>([]);
-  const [filterStatus, setFilterStatus] = useState<string>("new");
+  const [filterStatus, setFilterStatus] = useState<string>("all");
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(1);
   const [loading, setLoading] = useState<boolean>(true);
+  const [limit, setLimit] = useState<number>(3); // State for limit
 
   useEffect(() => {
     const fetchOpportunities = async () => {
       setLoading(true);
       try {
-        const response = await getOpportunities(currentPage);
+        const response = await getOpportunities(
+          currentPage,
+          limit,
+          filterStatus === "applied"
+        );
         console.log("res in oppr page: ", response);
         if (response && response.success) {
           setOpportunities(response.data);
@@ -46,25 +51,7 @@ const Opportunities: React.FC = () => {
     };
 
     fetchOpportunities();
-  }, [currentPage]);
-
-  const filteredOpportunities = opportunities.filter((opportunity) => {
-    const isApplied = opportunity.userApplication.some(
-      (application) => application.status === "applied"
-    );
-
-    if (filterStatus === "new") {
-      return !isApplied;
-    } else if (filterStatus === "applied") {
-      return isApplied;
-    }
-    return true;
-  });
-
-  const paginatedOpportunities = filteredOpportunities.slice(
-    (currentPage - 1) * 5,
-    currentPage * 5
-  );
+  }, [currentPage, limit, filterStatus]); // Add filterStatus to dependency array
 
   return (
     <div className="flex">
@@ -74,7 +61,7 @@ const Opportunities: React.FC = () => {
           <LoadingSpinner size="large" />
         ) : (
           <>
-            {paginatedOpportunities.map((opportunity) => (
+            {opportunities.map((opportunity) => (
               <OpportunityCard
                 key={opportunity._id}
                 opportunity={opportunity}
