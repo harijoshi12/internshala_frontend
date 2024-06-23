@@ -1,6 +1,7 @@
 // src/components/layout/Header.tsx
 
 import React from "react";
+import { FaBriefcase } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import { FaUserCircle } from "react-icons/fa";
 import Button from "../common/Button";
@@ -25,8 +26,13 @@ const Header: React.FC = () => {
   return (
     <header className="bg-white shadow-md p-4 flex justify-between items-center">
       {/* Logo or application name */}
-      <Link to="/" className="text-xl font-bold">
-        Internship Portal
+      <Link
+        to="/"
+        className="flex items-center space-x-2 text-2xl font-bold text-blue-600 hover:text-blue-800 transition-colors duration-300">
+        <FaBriefcase className="text-2xl" />
+        <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-teal-400">
+          Internship Portal
+        </span>
       </Link>
       <div>
         {user ? (
