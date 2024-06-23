@@ -4,7 +4,7 @@ import axios from 'axios';
 import { Opportunity, OpportunityFilters } from '../types/opportunity';
 import { User, LoginCredentials, RegisterCredentials } from '../types/user';
 
-const BASE_URL = 'http://api-base-url.com/api/v1';
+const BASE_URL = 'https://internship-portal-0ey7.onrender.com//api/v1';
 
 const api = axios.create({
   baseURL: BASE_URL,
