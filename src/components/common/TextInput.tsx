@@ -1,3 +1,5 @@
+// src/components/common/TextInput.tsx
+
 import React, { useState } from "react";
 import { UseFormRegisterReturn } from "react-hook-form";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
@@ -11,15 +13,14 @@ interface Props {
   isRequired?: boolean;
 }
 
-const TextInput: React.FC<Props> = (props) => {
-  const {
-    label,
-    type,
-    placeholder,
-    register,
-    error,
-    isRequired = false,
-  } = props;
+const TextInput: React.FC<Props> = ({
+  label,
+  type,
+  placeholder,
+  register,
+  error,
+  isRequired = false,
+}) => {
   const [showPassword, setShowPassword] = useState(false);
 
   const togglePasswordVisibility = () => {
@@ -27,8 +28,8 @@ const TextInput: React.FC<Props> = (props) => {
   };
 
   return (
-    <div className="flex flex-col mb-[2px]">
-      <label htmlFor={register?.name} className="mb-1">
+    <div className="flex flex-col mb-4">
+      <label htmlFor={register.name} className="mb-1">
         {label}
         {isRequired && <span className="text-red-500">*</span>}
       </label>
@@ -37,7 +38,7 @@ const TextInput: React.FC<Props> = (props) => {
           {...register}
           autoComplete="off"
           type={showPassword && type === "password" ? "text" : type}
-          id={register?.name}
+          id={register.name}
           placeholder={placeholder}
           className={`border border-gray-300 rounded-md px-3 py-2 w-full ${
             error ? "border-red-500" : ""

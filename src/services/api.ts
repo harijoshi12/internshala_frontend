@@ -1,11 +1,12 @@
 // src/services/api.ts
 
 import axios from 'axios';
-import { Opportunity, OpportunityFilters } from '../types/opportunity';
-import { User, LoginCredentials, RegisterCredentials } from '../types/user';
+import { LoginCredentials, RegisterCredentials, AuthResponse, Opportunity } from '../types';
 
-const BASE_URL = 'https://internship-portal-0ey7.onrender.com//api/v1';
+// Base URL for the API
+const BASE_URL = 'https://internship-portal-0ey7.onrender.com/api/v1';
 
+// Create an Axios instance
 const api = axios.create({
   baseURL: BASE_URL,
   headers: {
@@ -13,39 +14,84 @@ const api = axios.create({
   },
 });
 
-// Request interceptor
+// Add a request interceptor to include the token in headers if available
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token');
     if (token) {
-      config.headers['Authorization'] = `Bearer ${token}`;
+      config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
   },
-  (error) => Promise.reject(error)
+  (error) => {
+    return Promise.reject(error);
+  }
 );
 
-// Auth API functions
-export const register = (credentials: RegisterCredentials) =>
-  api.post<{ user: User; token: string }>('/auth/register', credentials);
+// Helper function to handle errors
+const handleError = (error: unknown) => {
+  if (axios.isAxiosError(error)) {
+    console.error("API error:", error.response?.data || error.message);
+  } else {
+    console.error("Unexpected error:", error);
+  }
+  throw error;
+};
 
-export const login = (credentials: LoginCredentials) =>
-  api.post<{ user: User; token: string }>('/auth/login', credentials);
+// Auth endpoints
+export const login = async (credentials: LoginCredentials) => {
+  try {
+    const response = await api.post<AuthResponse>('/auth/login', credentials);
+    return response.data;
+  } catch (error) {
+    handleError(error);
+  }
+};
 
-export const getCurrentUser = () =>
-  api.post<User>('/auth/user');
+export const register = async (credentials: RegisterCredentials) => {
+  try {
+    const response = await api.post<AuthResponse>('/auth/register', credentials);
+    return response.data;
+  } catch (error) {
+    handleError(error);
+  }
+};
 
-// Opportunity API functions
-export const getOpportunities = (filters?: OpportunityFilters) =>
-  api.get<{ opportunities: Opportunity[]; total: number }>('/opportunities', { params: filters });
+// Opportunity endpoints
+export const getOpportunities = async (page: number) => {
+  try {
+    const response = await api.get<{ success: boolean; data: Opportunity[]; pagination: { totalPages: number } }>(`/opportunities?page=${page}`);
+    return response.data;
+  } catch (error) {
+    handleError(error);
+  }
+};
 
-export const getOpportunityById = (id: number) =>
-  api.get<Opportunity>(`/opportunities/${id}`);
+export const getOpportunityById = async (id: string) => {
+  try {
+    const response = await api.get<Opportunity>(`/opportunities/${id}`);
+    return response.data;
+  } catch (error) {
+    handleError(error);
+  }
+};
 
-export const applyToOpportunity = (id: number) =>
-  api.post(`/opportunities/apply/${id}`);
+export const applyForOpportunity = async (id: string) => {
+  try {
+    const response = await api.post(`/opportunities/apply/${id}`);
+    return response.data;
+  } catch (error) {
+    handleError(error);
+  }
+};
 
-export const getAppliedOpportunities = () =>
-  api.get<Opportunity[]>('/opportunities/applied');
+export const getAppliedOpportunities = async () => {
+  try {
+    const response = await api.get<Opportunity[]>('/opportunities/applied');
+    return response.data;
+  } catch (error) {
+    handleError(error);
+  }
+};
 
 export default api;

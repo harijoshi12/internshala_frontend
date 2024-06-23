@@ -1,11 +1,6 @@
-export interface Location {
-  string: string;
-  link: string;
-  country: string;
-  region: string | null;
-  locationName: string;
-}
+// src/types/index.ts
 
+// Opportunity related types
 export interface Stipend {
   salary: string;
   tooltip: string | null;
@@ -17,20 +12,33 @@ export interface Stipend {
   large_stipend_text: boolean;
 }
 
+export interface Location {
+  string: string;
+  link: string;
+  country: string;
+  region: string | null;
+  locationName: string;
+}
+
 export interface ApplicationStatusMessage {
   to_show: boolean;
   message: string;
   type: string;
 }
 
-export interface Label {
-  label_value: string[];
-  label_mobile: string[];
-  label_app: string[];
-  labels_app_in_card: string[];
+export interface UserApplication {
+  _id: string;
+  status: string;
+  userId: string;
+  opportunityId: string;
+  appliedAt: string;
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
 }
 
 export interface Opportunity {
+  _id: string;
   id: number;
   title: string;
   employment_type: string;
@@ -89,28 +97,53 @@ export interface Opportunity {
   campaign_launch_date_time: string | null;
   campaign_early_access_start_date_time: string | null;
   campaign_end_date_time: string | null;
-  labels: Label[];
-  labels_app: string;
-  labels_app_in_card: string[];
+  labels: string[];
   is_covid_wfh_selected: boolean;
   to_show_card_message: boolean;
   message: string;
   is_application_capping_enabled: boolean;
   application_capping_message: string;
-  override_meta_details: any[];
+  override_meta_details: string[];
   eligible_for_easy_apply: boolean;
   eligible_for_b2b_apply_now: boolean;
   to_show_b2b_label: boolean;
   is_international_job: boolean;
   to_show_cover_letter: boolean;
   office_days: string | null;
+  is_applied: boolean;
+  applicationStatus?: string;
+  userApplication: UserApplication[];
 }
 
-export interface OpportunityFilters {
-  location?: string;
-  stipend?: number;
-  startDate?: string;
-  page?: number;
-  limit?: number;
-  applied?: boolean;
+// User related types
+export interface User {
+  id: number;
+  fullName: string;
+  email: string;
+  avatar: string | null;
+  token: string;
+}
+
+// Auth related types
+export interface LoginCredentials {
+  email: string;
+  password: string;
+}
+
+export interface RegisterCredentials {
+  fullName: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+}
+
+// API response types
+export interface AuthResponse {
+  user: User;
+  token: string;
+}
+
+export interface ErrorResponse {
+  message: string;
+  statusCode: number;
 }

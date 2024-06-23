@@ -1,11 +1,13 @@
-import React from "react";
+// src/pages/Login.tsx
+
+import React, { useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { useAuth } from "../hooks/useAuth";
 import TextInput from "../components/common/TextInput";
 import Button from "../components/common/Button";
-import { login as loginUser } from "../services/api";
+import LoadingSpinner from "../components/common/LoadingSpinner";
+import { useAuth } from "../context/AuthContext";
 
 interface LoginFormInputs {
   email: string;
@@ -13,27 +15,29 @@ interface LoginFormInputs {
 }
 
 const Login: React.FC = () => {
+  const { login } = useAuth();
+  const [loading, setLoading] = useState(false);
   const {
     register,
     handleSubmit,
     formState: { errors },
-    clearErrors,
   } = useForm<LoginFormInputs>({
     mode: "onBlur",
     criteriaMode: "all",
   });
-  const { login } = useAuth();
   const navigate = useNavigate();
 
   const onSubmit: SubmitHandler<LoginFormInputs> = async (data) => {
+    setLoading(true);
     try {
-      const response = await loginUser(data);
-      localStorage.setItem("token", response.data.token);
-      login(response.data.user);
+      await login(data);
       toast.success("Login successful!");
-      navigate("/opportunities");
-    } catch (err) {
-      toast.error("Invalid email or password");
+      navigate("/");
+    } catch (err: any) {
+      console.error("Login error:", err.response?.data || err.message);
+      toast.error(err?.response?.data?.message || "Login failed");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -53,16 +57,24 @@ const Login: React.FC = () => {
             },
           })}
           error={errors.email?.message}
+          isRequired={true}
         />
         <TextInput
           label="Password"
           type="password"
           placeholder="Password"
-          register={register("password", { required: "Password is required" })}
+          register={register("password", {
+            required: "Password is required",
+            minLength: {
+              value: 6,
+              message: "Password must be at least 6 characters",
+            },
+          })}
           error={errors.password?.message}
+          isRequired={true}
         />
-        <Button type="submit" className="w-full">
-          Login
+        <Button type="submit" className="w-full" disabled={loading}>
+          {loading ? <LoadingSpinner size="small" /> : "Login"}
         </Button>
       </form>
       <p className="mt-4 text-center">

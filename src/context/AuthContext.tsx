@@ -1,65 +1,100 @@
-import React, { createContext, useState, useEffect } from "react";
-import { User, LoginCredentials, RegisterCredentials } from "../types/user";
-import {
-  login as apiLogin,
-  register as apiRegister,
-  getCurrentUser as apiGetCurrentUser,
-} from "../services/api";
+// src/contexts/AuthContext.tsx
 
-export interface AuthContextType {
+import React, {
+  createContext,
+  useState,
+  useContext,
+  ReactNode,
+  useEffect,
+} from "react";
+import {
+  User,
+  AuthResponse,
+  LoginCredentials,
+  RegisterCredentials,
+} from "../types";
+import { login, register } from "../services/api";
+import axios from "axios";
+
+interface AuthContextType {
   user: User | null;
   login: (credentials: LoginCredentials) => Promise<void>;
   register: (credentials: RegisterCredentials) => Promise<void>;
   logout: () => void;
-  isLoading: boolean;
 }
 
-export const AuthContext = createContext<AuthContextType | undefined>(
-  undefined
-);
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
+export const AuthProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      apiGetCurrentUser()
-        .then((response) => setUser(response.data))
-        .catch(() => localStorage.removeItem("token"))
-        .finally(() => setIsLoading(false));
-    } else {
-      setIsLoading(false);
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
     }
   }, []);
 
-  const login = async (credentials: LoginCredentials) => {
-    const response = await apiLogin(credentials);
-    localStorage.setItem("token", response.data.token);
-    setUser(response.data.user);
+  const handleLogin = async (credentials: LoginCredentials) => {
+    try {
+      const response: any = await login(credentials);
+      setUser(response.user);
+      localStorage.setItem("user", JSON.stringify(response.user));
+      localStorage.setItem("token", response.token);
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.error("Login failed", error.response?.data || error.message);
+      } else {
+        console.error("Unexpected error during login", error);
+      }
+      throw error;
+    }
   };
 
-  const register = async (credentials: RegisterCredentials) => {
-    const response = await apiRegister(credentials);
-    localStorage.setItem("token", response.data.token);
-    setUser(response.data.user);
+  const handleRegister = async (credentials: RegisterCredentials) => {
+    try {
+      const response: any = await register(credentials);
+      setUser(response.user);
+      localStorage.setItem("user", JSON.stringify(response.user));
+      localStorage.setItem("token", response.token);
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.error(
+          "Registration failed",
+          error.response?.data || error.message
+        );
+      } else {
+        console.error("Unexpected error during registration", error);
+      }
+      throw error;
+    }
   };
 
-  const logout = () => {
-    localStorage.removeItem("token");
+  const handleLogout = () => {
     setUser(null);
+    localStorage.removeItem("user");
+    localStorage.removeItem("token");
   };
 
-  const value = {
-    user,
-    login,
-    register,
-    logout,
-    isLoading,
-  };
+  return (
+    <AuthContext.Provider
+      value={{
+        user,
+        login: handleLogin,
+        register: handleRegister,
+        logout: handleLogout,
+      }}>
+      {children}
+    </AuthContext.Provider>
+  );
+};
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+export const useAuth = (): AuthContextType => {
+  const context = useContext(AuthContext);
+  if (context === undefined) {
+    throw new Error("useAuth must be used within an AuthProvider");
+  }
+  return context;
 };

@@ -1,10 +1,13 @@
-import React from "react";
+// src/pages/Register.tsx
+
+import React, { useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import TextInput from "../components/common/TextInput";
 import Button from "../components/common/Button";
-import { register as registerUser } from "../services/api";
+import LoadingSpinner from "../components/common/LoadingSpinner";
+import { useAuth } from "../context/AuthContext";
 
 interface RegisterFormInputs {
   fullname: string;
@@ -14,11 +17,12 @@ interface RegisterFormInputs {
 }
 
 const Register: React.FC = () => {
+  const { register: registerUser } = useAuth();
+  const [loading, setLoading] = useState(false);
   const {
     register,
     handleSubmit,
     formState: { errors },
-    clearErrors,
   } = useForm<RegisterFormInputs>({
     mode: "onBlur",
     criteriaMode: "all",
@@ -31,16 +35,20 @@ const Register: React.FC = () => {
       return;
     }
 
+    setLoading(true);
     try {
       await registerUser({
-        fullname: data.fullname,
+        fullName: data.fullname,
         email: data.email,
         password: data.password,
+        confirmPassword: data.confirmPassword,
       });
       toast.success("Registration successful!");
       navigate("/login");
-    } catch (err) {
-      toast.error("Registration failed");
+    } catch (err: any) {
+      toast.error(err?.response?.data?.message || "Registration failed");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -108,8 +116,8 @@ const Register: React.FC = () => {
           error={errors.confirmPassword?.message}
           isRequired={true}
         />
-        <Button type="submit" className="w-full">
-          Register
+        <Button type="submit" className="w-full" disabled={loading}>
+          {loading ? <LoadingSpinner size="small" /> : "Register"}
         </Button>
       </form>
       <p className="mt-4 text-center">
