@@ -32,8 +32,14 @@ Welcome to the Internship Portal Frontend! This project is built using React, Vi
    git clone https://github.com/harijoshi12/internshala_frontend.git
    cd internshala_frontend
 
-   npm install
+   ```
 
+2. **Install dependencies**:
+   ```bash
+   npm install
+   ```
+3. **Start the development server**:
+   ```bash
    npm run dev
    ```
 
