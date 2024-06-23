@@ -1,6 +1,7 @@
 // src/components/opportunities/Sidebar.tsx
 
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 
 interface SidebarProps {
@@ -10,6 +11,15 @@ interface SidebarProps {
 
 const Sidebar: React.FC<SidebarProps> = ({ filterStatus, setFilterStatus }) => {
   const { user } = useAuth();
+  const navigate = useNavigate();
+
+  const handleFilterClick = (status: string) => {
+    if (status === "applied" && !user) {
+      navigate("/login");
+    } else {
+      setFilterStatus(status);
+    }
+  };
 
   return (
     <div className="w-1/4 p-4 border-r border-gray-200">
@@ -19,15 +29,14 @@ const Sidebar: React.FC<SidebarProps> = ({ filterStatus, setFilterStatus }) => {
           className={`w-full text-left p-2 rounded ${
             filterStatus === "all" ? "bg-blue-100" : ""
           }`}
-          onClick={() => setFilterStatus("all")}>
+          onClick={() => handleFilterClick("all")}>
           All Opportunities
         </button>
         <button
           className={`w-full text-left p-2 rounded ${
             filterStatus === "applied" ? "bg-blue-100" : ""
           }`}
-          onClick={() => setFilterStatus("applied")}
-          disabled={!user}>
+          onClick={() => handleFilterClick("applied")}>
           Applied Opportunities
         </button>
       </div>
