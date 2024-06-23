@@ -18,7 +18,7 @@ const Opportunities: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<number>(1); // State to store the current page number
   const [totalPages, setTotalPages] = useState<number>(1); // State to store the total number of pages
   const [loading, setLoading] = useState<boolean>(true); // State to manage loading spinner
-  const [limit, setLimit] = useState<number>(3); // State for limit of opportunities per page
+  const [limit] = useState<number>(3); // State for limit of opportunities per page
 
   /**
    * Fetch opportunities from the API based on the current page, limit, and filter status.
@@ -55,7 +55,6 @@ const Opportunities: React.FC = () => {
         setLoading(false);
       }
     };
-
     fetchOpportunities();
   }, [currentPage, limit, filterStatus]); // Add filterStatus to dependency array
 

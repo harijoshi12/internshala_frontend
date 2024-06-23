@@ -7,12 +7,7 @@ import React, {
   ReactNode,
   useEffect,
 } from "react";
-import {
-  User,
-  AuthResponse,
-  LoginCredentials,
-  RegisterCredentials,
-} from "../types";
+import { User, LoginCredentials, RegisterCredentials } from "../types";
 import { login, register } from "../services/api";
 import axios from "axios";
 
