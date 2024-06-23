@@ -2,22 +2,30 @@
 
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../../context/AuthContext";
+import { useAuth } from "../../contexts/AuthContext";
 
+// Define the props for the Sidebar component
 interface SidebarProps {
   filterStatus: string;
   setFilterStatus: (status: string) => void;
 }
 
+/**
+ * Sidebar component for filtering opportunities by status.
+ */
 const Sidebar: React.FC<SidebarProps> = ({ filterStatus, setFilterStatus }) => {
-  const { user } = useAuth();
-  const navigate = useNavigate();
+  const { user } = useAuth(); // Get the current user from the authentication context
+  const navigate = useNavigate(); // Hook to navigate programmatically
 
+  /**
+   * Handle filter button click.
+   * @param status - The filter status to set.
+   */
   const handleFilterClick = (status: string) => {
     if (status === "applied" && !user) {
-      navigate("/login");
+      navigate("/login"); // Redirect to login page if user is not logged in
     } else {
-      setFilterStatus(status);
+      setFilterStatus(status); // Set the filter status
     }
   };
 

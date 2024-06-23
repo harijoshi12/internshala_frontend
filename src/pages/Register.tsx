@@ -7,8 +7,9 @@ import { toast } from "react-toastify";
 import TextInput from "../components/common/TextInput";
 import Button from "../components/common/Button";
 import LoadingSpinner from "../components/common/LoadingSpinner";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../contexts/AuthContext";
 
+// Define the structure of the registration form inputs
 interface RegisterFormInputs {
   fullname: string;
   email: string;
@@ -16,9 +17,12 @@ interface RegisterFormInputs {
   confirmPassword: string;
 }
 
+/**
+ * Register component for user registration.
+ */
 const Register: React.FC = () => {
-  const { register: registerUser } = useAuth();
-  const [loading, setLoading] = useState(false);
+  const { register: registerUser } = useAuth(); // Get the register function from the authentication context
+  const [loading, setLoading] = useState(false); // State to manage loading spinner
   const {
     register,
     handleSubmit,
@@ -27,8 +31,12 @@ const Register: React.FC = () => {
     mode: "onBlur",
     criteriaMode: "all",
   });
-  const navigate = useNavigate();
+  const navigate = useNavigate(); // Hook to navigate programmatically
 
+  /**
+   * Handle form submission.
+   * @param data - The registration form data.
+   */
   const onSubmit: SubmitHandler<RegisterFormInputs> = async (data) => {
     if (data.password !== data.confirmPassword) {
       toast.error("Passwords do not match");
@@ -43,12 +51,12 @@ const Register: React.FC = () => {
         password: data.password,
         confirmPassword: data.confirmPassword,
       });
-      toast.success("Registration successful!");
-      navigate("/login");
+      toast.success("Registration successful!"); // Show success toast notification
+      navigate("/login"); // Navigate to the login page
     } catch (err: any) {
-      toast.error(err?.response?.data?.message || "Registration failed");
+      toast.error(err?.response?.data?.message || "Registration failed"); // Show error toast notification
     } finally {
-      setLoading(false);
+      setLoading(false); // Hide the loading spinner
     }
   };
 

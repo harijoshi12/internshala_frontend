@@ -7,43 +7,55 @@ import Button from "../common/Button";
 import LoadingSpinner from "../common/LoadingSpinner";
 import { applyForOpportunity } from "../../services/api";
 import { toast } from "react-toastify";
-import { useAuth } from "../../context/AuthContext";
+import { useAuth } from "../../contexts/AuthContext";
 
+// Define the props for the OpportunityCard component
 interface OpportunityCardProps {
   opportunity: Opportunity;
 }
 
+/**
+ * OpportunityCard component to display individual opportunity details.
+ */
 const OpportunityCard: React.FC<OpportunityCardProps> = ({ opportunity }) => {
-  const { user } = useAuth();
-  const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
+  const { user } = useAuth(); // Get the current user from the authentication context
+  const navigate = useNavigate(); // Hook to navigate programmatically
+  const [loading, setLoading] = useState(false); // State to manage loading spinner
   const [isApplied, setIsApplied] = useState(
     opportunity.userApplication.some(
       (application) => application.status === "applied"
     )
-  );
+  ); // State to check if the opportunity is already applied
 
+  /**
+   * Handle the apply button click.
+   */
   const handleApply = async () => {
     if (!user) {
-      navigate("/login");
+      navigate("/login"); // Redirect to login page if user is not logged in
     } else {
       setLoading(true);
       try {
-        await applyForOpportunity(opportunity._id);
-        toast.success("Application successful!");
+        await applyForOpportunity(opportunity._id); // Call the API to apply for the opportunity
+        toast.success("Application successful!"); // Show success toast notification
         setIsApplied(true); // Update the state to reflect the applied status
       } catch (error: any) {
         toast.error(
           error?.response?.data?.message ||
             "Failed to apply for the opportunity."
-        );
+        ); // Show error toast notification
         console.error("Apply error:", error);
       } finally {
-        setLoading(false);
+        setLoading(false); // Hide the loading spinner
       }
     }
   };
 
+  /**
+   * Get the initial letter of the company name.
+   * @param name - The company name.
+   * @returns The initial letter of the company name.
+   */
   const getInitial = (name: string) => {
     return name.charAt(0).toUpperCase();
   };

@@ -7,16 +7,20 @@ import { toast } from "react-toastify";
 import TextInput from "../components/common/TextInput";
 import Button from "../components/common/Button";
 import LoadingSpinner from "../components/common/LoadingSpinner";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../contexts/AuthContext";
 
+// Define the structure of the login form inputs
 interface LoginFormInputs {
   email: string;
   password: string;
 }
 
+/**
+ * Login component for user authentication.
+ */
 const Login: React.FC = () => {
-  const { login } = useAuth();
-  const [loading, setLoading] = useState(false);
+  const { login } = useAuth(); // Get the login function from the authentication context
+  const [loading, setLoading] = useState(false); // State to manage loading spinner
   const {
     register,
     handleSubmit,
@@ -25,19 +29,23 @@ const Login: React.FC = () => {
     mode: "onBlur",
     criteriaMode: "all",
   });
-  const navigate = useNavigate();
+  const navigate = useNavigate(); // Hook to navigate programmatically
 
+  /**
+   * Handle form submission.
+   * @param data - The login form data.
+   */
   const onSubmit: SubmitHandler<LoginFormInputs> = async (data) => {
     setLoading(true);
     try {
-      await login(data);
-      toast.success("Login successful!");
-      navigate("/");
+      await login(data); // Call the login function with form data
+      toast.success("Login successful!"); // Show success toast notification
+      navigate("/"); // Navigate to the home page
     } catch (err: any) {
       console.error("Login error:", err.response?.data || err.message);
-      toast.error(err?.response?.data?.message || "Login failed");
+      toast.error(err?.response?.data?.message || "Login failed"); // Show error toast notification
     } finally {
-      setLoading(false);
+      setLoading(false); // Hide the loading spinner
     }
   };
 

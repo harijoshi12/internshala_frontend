@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { UseFormRegisterReturn } from "react-hook-form";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
+// Define the props for the TextInput component
 interface Props {
   label: string;
   type: string;
@@ -13,6 +14,9 @@ interface Props {
   isRequired?: boolean;
 }
 
+/**
+ * TextInput component for rendering input fields with labels, error messages, and optional password visibility toggle.
+ */
 const TextInput: React.FC<Props> = ({
   label,
   type,
@@ -21,8 +25,11 @@ const TextInput: React.FC<Props> = ({
   error,
   isRequired = false,
 }) => {
-  const [showPassword, setShowPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState(false); // State to manage password visibility
 
+  /**
+   * Toggle the visibility of the password.
+   */
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };

@@ -2,11 +2,15 @@
 
 import React from "react";
 
+// Define the props for the Button component
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: "primary" | "secondary" | "outline";
   size?: "small" | "medium" | "large";
 }
 
+/**
+ * Button component for rendering styled buttons with different variants and sizes.
+ */
 const Button: React.FC<ButtonProps> = ({
   children,
   variant = "primary",
@@ -14,9 +18,11 @@ const Button: React.FC<ButtonProps> = ({
   className = "",
   ...props
 }) => {
+  // Base classes for the button
   const baseClasses =
     "font-semibold rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2";
 
+  // Classes for different button variants
   const variantClasses = {
     primary: "bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500",
     secondary:
@@ -25,6 +31,7 @@ const Button: React.FC<ButtonProps> = ({
       "border border-blue-600 text-blue-600 hover:bg-blue-50 focus:ring-blue-500",
   };
 
+  // Classes for different button sizes
   const sizeClasses = {
     small: "px-3 py-1.5 text-sm",
     medium: "px-4 py-2 text-base",

@@ -6,7 +6,7 @@ import { LoginCredentials, RegisterCredentials, AuthResponse, Opportunity } from
 // Base URL for the API
 const BASE_URL = 'https://internship-portal-0ey7.onrender.com/api/v1';
 
-// Create an Axios instance
+// Create an Axios instance with default configuration
 const api = axios.create({
   baseURL: BASE_URL,
   headers: {
@@ -39,6 +39,12 @@ const handleError = (error: unknown) => {
 };
 
 // Auth endpoints
+
+/**
+ * Login function to authenticate a user.
+ * @param credentials - The login credentials (email and password).
+ * @returns The authentication response containing user data and token.
+ */
 export const login = async (credentials: LoginCredentials) => {
   try {
     const response = await api.post<AuthResponse>('/auth/login', credentials);
@@ -48,6 +54,11 @@ export const login = async (credentials: LoginCredentials) => {
   }
 };
 
+/**
+ * Register function to create a new user.
+ * @param credentials - The registration credentials (name, email, password, confirmPassword).
+ * @returns The authentication response containing user data and token.
+ */
 export const register = async (credentials: RegisterCredentials) => {
   try {
     const response = await api.post<AuthResponse>('/auth/register', credentials);
@@ -58,6 +69,14 @@ export const register = async (credentials: RegisterCredentials) => {
 };
 
 // Opportunity endpoints
+
+/**
+ * Fetch opportunities with pagination and optional applied filter.
+ * @param page - The current page number.
+ * @param limit - The number of opportunities per page.
+ * @param isApplied - Optional filter to fetch only applied opportunities.
+ * @returns The response containing opportunities data and pagination info.
+ */
 export const getOpportunities = async (page: number, limit: number, isApplied: boolean = false) => {
   try {
     const response = await api.get<{ success: boolean; data: Opportunity[]; pagination: { totalPages: number } }>(`/opportunities?page=${page}&limit=${limit}&isApplied=${isApplied}`);
@@ -67,6 +86,11 @@ export const getOpportunities = async (page: number, limit: number, isApplied: b
   }
 };
 
+/**
+ * Apply for an opportunity.
+ * @param id - The ID of the opportunity to apply for.
+ * @returns The response data after applying for the opportunity.
+ */
 export const applyForOpportunity = async (id: string) => {
   try {
     const response = await api.post(`/opportunities/apply/${id}`);
